@@ -1,0 +1,69 @@
+<project name="RedisDump Build" default="release" basedir=".">
+    <property name="configuration" value="Release" />
+	<property name="dir.source" value="${project::get-base-directory()}" />
+	<property name="dir.app" value="${project::get-base-directory()}\bin" />
+	<property name="versionString" value="0-0-0-0"/>
+
+	<target name="release" depends="set.version, clean, build, copy" />
+
+	<target name="setVersionString">
+		<loadfile file="version.txt" property="versionString" />
+		<echo message= "Old Version: ${versionString}" />
+		<property name="major" value="${version::get-major(version::parse(versionString))}" />
+		<property name="minor" value="${version::get-minor(version::parse(versionString))}" />
+		<property name="build" value="${version::get-build(version::parse(versionString))}" />
+		<property name="revision" value="${version::get-revision(version::parse(versionString))}" />
+		<property name="versionString" value="${major}.${minor}.${build}.${revision}"/>
+	</target>
+	
+    <target name="clean" description="Delete all previously compiled binaries.">
+        <delete>
+            <fileset basedir="${dir.source}">
+                <include name="**/bin/**" />
+                <include name="**/obj/**" />
+                <include name="**/*.suo" />
+                <include name="**/*.user" />
+            </fileset>
+        </delete>
+		<delete dir="${dir.app}" failonerror="false" />
+		<mkdir dir="${dir.app}" />
+    </target>
+	
+	<target name="set.version" depends="setVersionString" description="generates the version number">
+		<echo message="Setting the build version to ${versionString}..." />
+		<attrib file="${dir.source}\redisdump\Properties\AssemblyInfo.cs" readonly="false" />
+		<asminfo output="${dir.source}\redisdump\Properties\AssemblyInfo.cs" language="CSharp">
+			<imports>
+				<import namespace="System" />
+				<import namespace="System.Reflection" />
+			</imports>
+			<attributes>
+				<attribute type="AssemblyTitleAttribute" value="RedisDump" />
+				<attribute type="AssemblyCompanyAttribute" value="Maca134" />
+				<attribute type="AssemblyProductAttribute" value="RedisDump" />
+				<attribute type="AssemblyCopyrightAttribute" value="Copyright 2014" />
+				<attribute type="AssemblyVersionAttribute" value="${versionString}" />
+				<attribute type="AssemblyFileVersionAttribute" value="${versionString}" />
+			</attributes>
+		</asminfo>
+		<attrib file="${dir.source}\redisdump\Properties\AssemblyInfo.cs" readonly="true" />
+	</target>
+
+	<target name="build" description="Compiles using the AutomatedDebug Configuration">
+		<msbuild project="${dir.source}\redisdump.sln">
+			<property name="Configuration" value="${configuration}"/>
+		</msbuild>
+	</target>
+	
+	<target name="copy" description="Copy bin">
+		<copy todir="${dir.app}">
+			<fileset basedir="${dir.source}/redisdump/bin/${configuration}">
+				<include name="**/*" />
+				<exclude name="**/*.pdb" />
+				<exclude name="**/*.xml" />
+                <exclude name="**/*.config" />
+            </fileset>
+		</copy>
+	</target>
+	
+</project>

@@ -1,3 +1,4 @@
 packages/*
 redisdump/bin/*
 redisdump/obj/*
+nant-0.92/*
