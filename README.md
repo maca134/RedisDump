@@ -5,12 +5,12 @@ This is a small tool to make it easy to backup and restore individual Redis DB's
 
 Dumps and restores redis databases
 
-        --file          Sets the backup/restore file.
-        --host          Sets redis host.
-        --port          Sets redis port.
-        --password      Sets redis password.
-        --db            Sets redis DB ID
-        --backup        Performs a backup
+        --file          Sets the backup/restore file. (Required)
+        --host          Sets redis host. (Default: "localhost")
+        --port          Sets redis port. (Default: 6379)
+        --password      Sets redis password. (Default: "")
+        --db            Sets redis DB ID  (Default: 0)
+        --backup        Performs a backup 
         --restore       Performs a restore
 
 Examples:
